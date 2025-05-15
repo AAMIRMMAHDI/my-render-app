@@ -2,10 +2,6 @@ import time
 import threading
 import requests
 from flask import Flask
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 import logging
 
 # تنظیمات لاگ
@@ -20,41 +16,24 @@ def ping():
     logger.info("Received ping request")
     return "OK"
 
-# تنظیمات مرورگر
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--disable-gpu")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("--ignore-certificate-errors")
-chrome_options.add_argument("--log-level=3")
-
-# لیست سایت‌ها به ترتیب
+# لیست سایت‌ها
 sites = [
     "https://web-chat-mbai.onrender.com/",
     "https://django-1-46yo.onrender.com/"
 ]
 
 # URL سرویس شما در Render
-SELF_URL = "https://my-render-app-vkf8.onrender.com/ping"  # این باید URL واقعی سرویس شما باشه
+SELF_URL = "https://my-render-app-vkf8.onrender.com/ping"  # بعد از دیپلوی درستش کن
 
-def open_and_close_site(site):
+def ping_site(site):
     try:
-        service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service, options=chrome_options)
-        logger.info(f"Opening site: {site}")
-        driver.get(site)
-        time.sleep(30)
-        logger.info(f"Site {site} opened successfully")
+        response = requests.get(site, timeout=10)
+        logger.info(f"Pinged {site}: Status {response.status_code}")
     except Exception as e:
-        logger.error(f"Error opening site {site}: {e}")
-    finally:
-        if 'driver' in locals():
-            driver.quit()
-            logger.info(f"Site {site} closed")
+        logger.error(f"Error pinging {site}: {e}")
 
 def self_ping():
-    time.sleep(60)  # صبر 1 دقیقه تا سرور Flask کامل راه‌اندازی بشه
+    time.sleep(60)  # صبر 1 دقیقه تا سرور Flask راه‌اندازی بشه
     while True:
         try:
             response = requests.get(SELF_URL, timeout=10)
@@ -71,15 +50,17 @@ if __name__ == "__main__":
         ping_thread.daemon = True
         ping_thread.start()
         
-        # حلقه اصلی برای سایت‌ها
-        logger.info("Starting main loop for sites")
+        # شروع سرور Flask
         flask_thread = threading.Thread(target=lambda: app.run(host="0.0.0.0", port=8080, use_reloader=False))
         flask_thread.daemon = True
         flask_thread.start()
         
+        # حلقه اصلی برای پینگ سایت‌ها
+        logger.info("Starting main loop for sites")
         while True:
             for site in sites:
-                open_and_close_site(site)
-                time.sleep(10)
+                ping_site(site)
+                time.sleep(30)  # 30 ثانیه صبر برای هر سایت
+            time.sleep(10)  # 10 ثانیه تأخیر بعد از هر چرخه
     except Exception as e:
         logger.error(f"Main loop error: {e}")
