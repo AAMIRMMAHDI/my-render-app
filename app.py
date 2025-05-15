@@ -30,7 +30,7 @@ sites = [
 ]
 
 # URL سرویس شما در Render (بعد از دیپلوی پر کنید)
-SELF_URL = "https://your-service.onrender.com/ping"  # این را با URL واقعی جایگزین کنید
+SELF_URL = "https://my-render-app-vkf8.onrender.com//ping"  # این را با URL واقعی جایگزین کنید
 
 def open_and_close_site(site):
     service = Service(ChromeDriverManager().install())
