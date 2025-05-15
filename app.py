@@ -40,7 +40,7 @@ def self_ping():
             logger.info(f"Self-ping to {SELF_URL}: Status {response.status_code}")
         except Exception as e:
             logger.error(f"Self-ping error: {e}")
-        time.sleep(600)  # هر 10 دقیقه
+        time.sleep(60)  # هر 10 دقیقه
 
 # اجرای سرور Flask و self-ping در نخ‌های جداگانه
 if __name__ == "__main__":
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         ping_thread.start()
         
         # شروع سرور Flask
-        flask_thread = threading.Thread(target=lambda: app.run(host="0.0.0.0", port=8080, use_reloader=False))
+        flask_thread = threading.Thread(target=lambda: app.run(host="0.0.0.0", port=8000, use_reloader=False))
         flask_thread.daemon = True
         flask_thread.start()
         
@@ -60,7 +60,7 @@ if __name__ == "__main__":
         while True:
             for site in sites:
                 ping_site(site)
-                time.sleep(30)  # 30 ثانیه صبر برای هر سایت
-            time.sleep(10)  # 10 ثانیه تأخیر بعد از هر چرخه
+                time.sleep(15)  # 30 ثانیه صبر برای هر سایت
+            time.sleep(5)  # 10 ثانیه تأخیر بعد از هر چرخه
     except Exception as e:
         logger.error(f"Main loop error: {e}")
