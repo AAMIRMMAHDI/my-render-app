@@ -20,6 +20,7 @@ def ping():
 sites = [
     "https://web-chat-mbai.onrender.com/",
     "https://django-1-46yo.onrender.com/"
+    "https://c-drive.onrender.com/"
 ]
 
 # URL سرویس شما در Render
