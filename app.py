@@ -16,15 +16,15 @@ def ping():
     logger.info("Received ping request")
     return "OK"
 
-# لیست سایت‌ها
+# لیست سایت‌ها (شامل آدرس جدید)
 sites = [
     "https://web-chat-mbai.onrender.com/",
-    "https://django-1-46yo.onrender.com/"
+    "https://django-1-46yo.onrender.com/",
     "https://c-drive.onrender.com/"
 ]
 
-# URL سرویس شما در Render
-SELF_URL = "https://my-render-app-vkf8.onrender.com/ping"  # بعد از دیپلوی درستش کن
+# آدرس URL سرویس شما در Render (حتماً بعد از دیپلوی آدرس درست را جایگزین کن)
+SELF_URL = "https://my-render-app-vkf8.onrender.com/ping"
 
 def ping_site(site):
     try:
@@ -41,7 +41,7 @@ def self_ping():
             logger.info(f"Self-ping to {SELF_URL}: Status {response.status_code}")
         except Exception as e:
             logger.error(f"Self-ping error: {e}")
-        time.sleep(60)  # هر 10 دقیقه
+        time.sleep(600)  # هر 10 دقیقه
 
 # اجرای سرور Flask و self-ping در نخ‌های جداگانه
 if __name__ == "__main__":
@@ -50,18 +50,18 @@ if __name__ == "__main__":
         ping_thread = threading.Thread(target=self_ping)
         ping_thread.daemon = True
         ping_thread.start()
-        
+
         # شروع سرور Flask
         flask_thread = threading.Thread(target=lambda: app.run(host="0.0.0.0", port=8000, use_reloader=False))
         flask_thread.daemon = True
         flask_thread.start()
-        
+
         # حلقه اصلی برای پینگ سایت‌ها
         logger.info("Starting main loop for sites")
         while True:
             for site in sites:
                 ping_site(site)
-                time.sleep(15)  # 30 ثانیه صبر برای هر سایت
-            time.sleep(5)  # 10 ثانیه تأخیر بعد از هر چرخه
+                time.sleep(15)  # 15 ثانیه بین هر پینگ سایت
+            time.sleep(5)  # 5 ثانیه تأخیر بعد از هر چرخه کامل
     except Exception as e:
         logger.error(f"Main loop error: {e}")
