@@ -18,7 +18,7 @@ def ping():
 
 # لیست سایت‌ها (شامل آدرس جدید)
 sites = [
-    "https://web-chat-mbai.onrender.com/",
+    "https://web-chat-dgbt.onrender.com/",
     "https://django-1-46yo.onrender.com/",
     "https://c-drive.onrender.com/"
 ]
